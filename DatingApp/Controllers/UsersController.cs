@@ -17,7 +17,6 @@ namespace DatingApp.Controllers
 			_context = context;
 		}
 
-		[Authorize]
 		[HttpGet]
 		public async Task<ActionResult<IEnumerable<AppUser>>> GetUsersAsync()
 		{
