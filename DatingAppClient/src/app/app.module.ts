@@ -34,7 +34,8 @@ import {SharedModule} from './_modules/shared.module';
     HttpClientModule,
     BrowserAnimationsModule
   ],
-  providers: [],
+  providers: [
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule {
