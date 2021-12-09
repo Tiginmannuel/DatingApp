@@ -1,6 +1,4 @@
 import {Component, OnInit} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
-import {IUser} from '../_models/account-interface';
 
 @Component({
   selector: 'app-home',

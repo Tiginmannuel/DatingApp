@@ -4,6 +4,6 @@ export interface ILoginModel {
 }
 
 export interface IUser {
-  username: string;
+  userName: string;
   token: string;
 }
