@@ -4,7 +4,7 @@ import {Observable} from 'rxjs';
 import {AccountService} from '../_services/account.service';
 import {ToastrService} from 'ngx-toastr';
 import {map} from 'rxjs/operators';
-import {IUser} from '../_models/account-interface';
+import {IUser} from '../_models/user';
 
 @Injectable({
   providedIn: 'root'

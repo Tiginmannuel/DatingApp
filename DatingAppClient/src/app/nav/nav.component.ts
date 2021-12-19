@@ -1,6 +1,6 @@
 import {Component} from '@angular/core';
 import {AccountService} from '../_services/account.service';
-import {ILoginModel} from '../_models/account-interface';
+import {ILoginModel} from '../_models/user';
 import {Router} from '@angular/router';
 
 @Component({
