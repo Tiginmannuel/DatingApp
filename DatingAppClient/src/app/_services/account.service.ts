@@ -19,11 +19,9 @@ export class AccountService {
   public login(model: ILoginModel): Observable<IUser> {
     return this.http.post(this.baseUrl + 'account/login', model)
       .pipe(
-        map((response: IUser) => {
-          const user = response;
+        map((user: IUser) => {
           if (user) {
-            localStorage.setItem('user', JSON.stringify(user));
-            this.currentUserSource.next(user);
+            this.setCurrentUser(user);
           }
           return user;
         })
@@ -35,8 +33,7 @@ export class AccountService {
       .pipe(
         map((user: IUser) => {
           if (user) {
-            localStorage.setItem('user', JSON.stringify(user));
-            this.currentUserSource.next(user);
+            this.setCurrentUser(user);
           }
           return user;
         })
@@ -44,6 +41,7 @@ export class AccountService {
   }
 
   public setCurrentUser(user: IUser): void {
+    localStorage.setItem('user', JSON.stringify(user));
     this.currentUserSource.next(user);
   }
 

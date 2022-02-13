@@ -4,6 +4,7 @@ using DatingApp.Entities;
 using DatingApp.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -39,32 +40,34 @@ namespace DatingApp.Controllers
 			return new UserDto
 			{
 				UserName = user.UserName,
-				Token = _tokenService.CreateToken(user)
+				Token = _tokenService.CreateToken(user),
+				PhotoUrl = user.Photos.FirstOrDefault(x => x.IsMain)?.Url
 			};
 		}
 
-	[HttpPost("login")]
-	public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
-	{
-		var user = await _dataContext.Users.SingleOrDefaultAsync(x => x.UserName.ToLower() == loginDto.UserName.ToLower());
-
-		if (user == null) return Unauthorized("Invalid UserName");
-
-		using var hmac = new HMACSHA512(user.PasswordSalt);
-		var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(loginDto.Password));
-
-		for (int i = 0; i < computedHash.Length; i++)
+		[HttpPost("login")]
+		public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
 		{
-			if (computedHash[i] != user.PasswordHash[i]) return Unauthorized("Invalid Password");
-		}
-		return new UserDto
+			var user = await _dataContext.Users.Include(x => x.Photos).SingleOrDefaultAsync(x => x.UserName.ToLower() == loginDto.UserName.ToLower());
+
+			if (user == null) return Unauthorized("Invalid UserName");
+
+			using var hmac = new HMACSHA512(user.PasswordSalt);
+			var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(loginDto.Password));
+
+			for (int i = 0; i < computedHash.Length; i++)
+			{
+				if (computedHash[i] != user.PasswordHash[i]) return Unauthorized("Invalid Password");
+			}
+			return new UserDto
 			{
 				UserName = user.UserName,
-				Token = _tokenService.CreateToken(user)
+				Token = _tokenService.CreateToken(user),
+				PhotoUrl = user.Photos.FirstOrDefault(x => x.IsMain)?.Url
 			};
 		}
 
-	private async Task<bool> UserExists(string username)
-		 => await _dataContext.Users.AnyAsync(x => x.UserName.ToLower() == username.ToLower());
-}
+		private async Task<bool> UserExists(string username)
+			 => await _dataContext.Users.AnyAsync(x => x.UserName.ToLower() == username.ToLower());
+	}
 }

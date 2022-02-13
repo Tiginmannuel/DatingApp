@@ -6,4 +6,5 @@ export interface ILoginModel {
 export interface IUser {
   userName: string;
   token: string;
+  photoUrl: string;
 }
