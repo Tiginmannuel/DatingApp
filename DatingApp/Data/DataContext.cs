@@ -11,13 +11,30 @@ namespace DatingApp.Data
 		}
 
 		public DbSet<AppUser> Users { get; set; }
+		public DbSet<UserLike> Likes { get; set; }
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
+			base.OnModelCreating(modelBuilder);
 			modelBuilder.Entity<AppUser>(u =>
 			{
 				u.HasKey(e => new { e.UserId });
 			});
+			modelBuilder.Entity<UserLike>(u =>
+			{
+				u.HasKey(e => new { e.SourceUserId, e.LikedUserId });
+			});
+			modelBuilder.Entity<UserLike>()
+				.HasOne(s => s.SourceUser)
+				.WithMany(l => l.LikedUsers)
+				.HasForeignKey(s => s.SourceUserId)
+				.OnDelete(DeleteBehavior.NoAction);
+
+			modelBuilder.Entity<UserLike>()
+				.HasOne(u => u.LikedUser)
+				.WithMany(l => l.LikedByUsers)
+				.HasForeignKey(f => f.LikedUserId)
+				.OnDelete(DeleteBehavior.NoAction);
 		}
 	}
 }
