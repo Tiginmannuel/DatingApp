@@ -32,14 +32,14 @@ namespace DatingApp.Controllers
 
 			if (sourceUser.UserName == userName) return BadRequest("You cannot like yourself");
 
-			var userLike = await _likesRepository.GetUserLikeAsync(sourceUserId, likedUser.UserId);
+			var userLike = await _likesRepository.GetUserLikeAsync(sourceUserId, likedUser.Id);
 
 			if (userLike != null) return BadRequest("You Already Like this User");
 
 			userLike = new UserLike
 			{
 				SourceUserId = sourceUserId,
-				LikedUserId = likedUser.UserId
+				LikedUserId = likedUser.Id
 			};
 			sourceUser.LikedUsers.Add(userLike);
 			if (await _userRepository.SaveAllAsync()) return Ok();
