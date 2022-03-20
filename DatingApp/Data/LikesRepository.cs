@@ -45,7 +45,7 @@ namespace DatingApp.Data
 				Age = x.DateOfBirth.CalculateAge(),
 				PhotoUrl = x.Photos.FirstOrDefault(p => p.IsMain).Url,
 				City = x.City,
-				Id = x.UserId
+				Id = x.Id
 			});
 			return await PageList<LikeDto>.CreateAsync(likedUsers, likesParams.PageNumber, likesParams.PageSize);
 		}
@@ -54,7 +54,7 @@ namespace DatingApp.Data
 		{
 			return await _context.Users
 				.Include(u => u.LikedUsers)
-				.FirstOrDefaultAsync(x => x.UserId == userId);
+				.FirstOrDefaultAsync(x => x.Id == userId);
 		}
 	}
 }

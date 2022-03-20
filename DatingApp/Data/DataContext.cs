@@ -19,7 +19,7 @@ namespace DatingApp.Data
 			base.OnModelCreating(modelBuilder);
 			modelBuilder.Entity<AppUser>(u =>
 			{
-				u.HasKey(e => new { e.UserId });
+				u.HasKey(e => new { e.Id });
 			});
 			modelBuilder.Entity<UserLike>(u =>
 			{
