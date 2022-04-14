@@ -1,9 +1,11 @@
 ﻿using DatingApp.Entities;
+using Microsoft.AspNetCore.Identity;
+using System.Threading.Tasks;
 
 namespace DatingApp.Interfaces
 {
 	public interface ITokenService
 	{
-		string CreateToken(AppUser user);
+		Task<string> CreateTokenAsync(AppUser user);
 	}
 }
