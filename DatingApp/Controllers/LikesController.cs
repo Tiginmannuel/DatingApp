@@ -12,27 +12,25 @@ namespace DatingApp.Controllers
 	[Authorize]
 	public class LikesController : BaseApiController
 	{
-		private readonly IUserRepository _userRepository;
-		private readonly ILikesRepository _likesRepository;
+		private readonly IUnitOfWork _unitOfWork;
 
-		public LikesController(IUserRepository userRepository, ILikesRepository likesRepository)
+		public LikesController(IUnitOfWork unitOfWork)
 		{
-			_userRepository = userRepository;
-			_likesRepository = likesRepository;
+			_unitOfWork = unitOfWork;
 		}
 
 		[HttpPost("{username}")]
 		public async Task<ActionResult> AddLikeAsync(string userName)
 		{
 			var sourceUserId = User.GetUserId();
-			var likedUser = await _userRepository.GetUserByUserNameAsync(userName);
-			var sourceUser = await _likesRepository.GetUserWithLikesAsync(sourceUserId);
+			var likedUser = await _unitOfWork.UserRepository.GetUserByUserNameAsync(userName);
+			var sourceUser = await _unitOfWork.LikesRepository.GetUserWithLikesAsync(sourceUserId);
 
 			if (likedUser == null) return NotFound();
 
 			if (sourceUser.UserName == userName) return BadRequest("You cannot like yourself");
 
-			var userLike = await _likesRepository.GetUserLikeAsync(sourceUserId, likedUser.Id);
+			var userLike = await _unitOfWork.LikesRepository.GetUserLikeAsync(sourceUserId, likedUser.Id);
 
 			if (userLike != null) return BadRequest("You Already Like this User");
 
@@ -42,7 +40,7 @@ namespace DatingApp.Controllers
 				LikedUserId = likedUser.Id
 			};
 			sourceUser.LikedUsers.Add(userLike);
-			if (await _userRepository.SaveAllAsync()) return Ok();
+			if (await _unitOfWork.Complete()) return Ok();
 			return BadRequest("Failed To Like user");
 		}
 
@@ -50,7 +48,7 @@ namespace DatingApp.Controllers
 		public async Task<ActionResult<PageList<LikeDto>>> GetUserLikes([FromQuery] LikesParams likesParams)
 		{
 			likesParams.UserId = User.GetUserId();
-			var users = await _likesRepository.GetUserLikesAsync(likesParams);
+			var users = await _unitOfWork.LikesRepository.GetUserLikesAsync(likesParams);
 
 			Response.AddPaginationHeader(users.CurrentPage, users.PageSize, users.TotalCount, users.TotalPages);
 			return Ok(users);
